@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: stg_dim_currency
+    description: One row per source currency and its rate to the base currency.
+    columns:
+      - name: currency_id
+        tests: [not_null, unique]
+      - name: exchange_rate_to_base
+        tests: [not_null]
+
+  - name: stg_dim_game
+    description: One row per game with cleaned list-valued themes and mechanics.
+    columns:
+      - name: game_id
+        tests: [not_null, unique]
+      - name: game_type
+        tests: [not_null]
+
+  - name: stg_fact_activity
+    description: One row per raw player, casino, game, and activity date record.
+    columns:
+      - name: activity_date
+        tests: [not_null]
+      - name: casino_id
+        tests: [not_null]
+      - name: player_id
+        tests: [not_null]
+      - name: game_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_game')
+                field: game_id
+      - name: currency_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_currency')
+                field: currency_id
+      - name: total_wager
+        tests: [not_null]
+      - name: total_payout
+        tests: [not_null]
+      - name: total_spins
+        tests: [not_null]
+
+  - name: dim_currency
+    description: Clean currency dimension.
+
+  - name: dim_game
+    description: Clean game dimension with one-hot theme and mechanic flags.
+
+  - name: fct_activity
+    description: Base-currency activity fact, one row per source activity record.
+    columns:
+      - name: activity_date
+        tests: [not_null]
+      - name: game_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_game')
+                field: game_id
+      - name: total_wager_base
+        tests: [not_null]
+      - name: total_payout_base
+        tests: [not_null]
+      - name: revenue
+        tests: [not_null]
+      - name: total_spins
+        tests: [not_null]
+
+  - name: bridge_game_themes
+    description: One row per game-theme association.
+    columns:
+      - name: game_id
+        tests: [not_null]
+      - name: theme
+        tests: [not_null]
+
+  - name: bridge_game_mechanics
+    description: One row per game-mechanic association.
+    columns:
+      - name: game_id
+        tests: [not_null]
+      - name: mechanic
+        tests: [not_null]

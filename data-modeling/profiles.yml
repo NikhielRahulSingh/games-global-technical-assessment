@@ -1,0 +1,7 @@
+adp_assessment:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: target/adp_assessment.duckdb
+      threads: 4

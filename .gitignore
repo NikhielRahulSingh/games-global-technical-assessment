@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# dbt build artifacts
+target/*
+!target/.gitkeep
+logs/
+
+# Large local data and database artifacts
+data/fact_activity.csv
+data/df_unified_eda.pkl
+data-modeling/target/adp_assessment.duckdb
+
+# Virtual environments
+.venv
